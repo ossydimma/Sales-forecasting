@@ -1,0 +1,36 @@
+# Data files - never push raw or processed data to GitHub
+data/raw/
+data/processed/
+
+# Jupyter notebook checkpoints
+.ipynb_checkpoints/
+*/.ipynb_checkpoints/
+
+# Saved model files (too large for GitHub)
+models/
+
+# Python cache
+__pycache__/
+*.py[cod]
+*.pyo
+
+# Environment files
+.env
+.venv/
+env/
+venv/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# VS Code settings
+.vscode/
+
+# Large output files
+*.pkl
+*.h5
+*.joblib
+
+
+notebooks/*03_data_cleaning.ipynb
