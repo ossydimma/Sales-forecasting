@@ -1,4 +1,4 @@
-# Data files - never push raw or processed data to GitHub
+
 data/raw/
 data/processed/
 
@@ -31,6 +31,3 @@ Thumbs.db
 *.pkl
 *.h5
 *.joblib
-
-
-notebooks/*03_data_cleaning.ipynb

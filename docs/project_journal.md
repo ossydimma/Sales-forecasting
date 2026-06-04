@@ -69,3 +69,25 @@ This is counterintuitive — may reflect that high-footfall locations attract bo
 Move to data cleaning notebook (03_data_cleaning.ipynb).
 Handle missing values in store.csv, fix data types, and prepare a clean merged dataframe
 ready for feature engineering.
+
+## 2026-06-03
+
+ Cleaning Summary
+
+### train.csv
+- No missing values found
+- Date converted from object to datetime64
+- StateHoliday confirmed as string type
+- 54 rows dropped (Open=1, Sales=0) — 0.01% of open days, likely data entry errors
+- 172,817 closed-store rows excluded
+
+### store.csv
+- CompetitionDistance: 3 missing → filled with median (2,325m)
+- CompetitionOpenSinceMonth/Year: 354 missing → filled with 0 (no competitor data)
+- Promo2SinceWeek/Year: 544 missing → filled with 0 (stores not in Promo2 scheme)
+- PromoInterval: 544 missing → filled with "None" (stores not in Promo2 scheme)
+
+### Merged output
+- Shape: (844,338, 18)
+- Missing values: 0
+- Saved to: data/processed/train_clean.csv

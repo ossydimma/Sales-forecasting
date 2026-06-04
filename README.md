@@ -72,14 +72,29 @@ Before building any model, the data revealed several strong business patterns:
 
 ---
 
+## Data Cleaning Summary
+
+| Column | Issue | Strategy |
+|--------|-------|----------|
+| CompetitionDistance | 3 missing (0.27%) | Filled with median (2,325m) |
+| CompetitionOpenSinceMonth/Year | 354 missing (31.75%) | Filled with 0 — no competitor data |
+| Promo2SinceWeek/Year | 544 missing (48.79%) | Filled with 0 — stores not in Promo2 scheme |
+| PromoInterval | 544 missing (48.79%) | Filled with "None" — stores not in Promo2 scheme |
+| Open=1, Sales=0 | 54 rows (0.01%) | Dropped — likely data entry errors |
+
+**Clean dataset:** 844,338 rows × 18 columns, zero missing values
+Saved to `data/processed/train_clean.csv`
+
+---
+
 ## Workflow
 
 | Phase | Notebook | Status |
 |-------|----------|--------|
 | Data understanding | 01_data_understanding.ipynb | ✅ Complete |
 | Exploratory analysis | 02_eda.ipynb | ✅ Complete |
-| Data cleaning | 03_data_cleaning.ipynb | 🔄 In progress |
-| Feature engineering | 04_feature_engineering.ipynb | ⏳ Pending |
+| Data cleaning | 03_data_cleaning.ipynb | ✅ Complete |
+| Feature engineering | 04_feature_engineering.ipynb | 🔄 In progress |
 | Modelling | 05_modelling.ipynb | ⏳ Pending |
 | Evaluation | 06_evaluation.ipynb | ⏳ Pending |
 
