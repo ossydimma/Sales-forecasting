@@ -87,6 +87,22 @@ Saved to `data/processed/train_clean.csv`
 
 ---
 
+## Feature Engineering Summary
+ 
+| Feature | Type | Description |
+|---------|------|-------------|
+| Year, Month, Day, Week | Date | Extracted from Date column |
+| IsWeekend | Date | 1 if DayOfWeek is Saturday or Sunday |
+| IsMonthStart, IsMonthEnd | Date | Flags for month boundaries |
+| CompetitionOpen | Competition | Months since nearest competitor opened |
+| Promo2Active | Promotion | 1 if store is actively in a Promo2 cycle on that date |
+| StoreType, Assortment, StateHoliday | Encoding | Label-encoded from string to integer |
+ 
+**Feature dataset:** 844,338 rows × 20 columns, all numeric, zero missing values
+Saved to `data/processed/train_features.csv`
+
+---
+
 ## Workflow
 
 | Phase | Notebook | Status |

@@ -72,7 +72,7 @@ ready for feature engineering.
 
 ## 2026-06-03
 
- Cleaning Summary
+Cleaning Summary
 
 ### train.csv
 - No missing values found
@@ -91,3 +91,47 @@ ready for feature engineering.
 - Shape: (844,338, 18)
 - Missing values: 0
 - Saved to: data/processed/train_clean.csv
+
+## 2026-06-04
+ 
+Completed feature engineering. Output saved to data/processed/train_features.csv.
+ 
+### Date features (7 new columns)
+Extracted Year, Month, Day, Week from Date column.
+Added IsWeekend flag (1 if DayOfWeek is 6 or 7).
+Added IsMonthStart and IsMonthEnd flags — month boundaries often show sales spikes.
+ 
+### Competition feature (1 new column)
+CompetitionOpen — months since nearest competitor opened.
+Formula: 12 * (Year - CompetitionOpenSinceYear) + (Month - CompetitionOpenSinceMonth).
+Negative values clipped to 0 for stores with no competition data.
+Mean competition open duration: 7,731 months. Max: 24,187 months (~2,015 years — very old stores).
+ 
+### Promo2 feature (1 new column)
+Promo2Active — 1 if the store is actively running a Promo2 campaign on that date.
+Logic: store participates in Promo2, current month is in PromoInterval, and
+current date is on or after Promo2SinceYear/Week.
+Active rate: 14.96% of open days (126,276 rows).
+ 
+Note: verified that the dataset uses "Sept" (not "Sep") in PromoInterval.
+Always check the actual data before assuming standard abbreviations.
+ 
+### Encoding
+StoreType: a=0, b=1, c=2, d=3
+Assortment: a=0, b=1, c=2
+StateHoliday: 0=0, a=1, b=2, c=3
+ 
+### Columns dropped (7)
+Date, Open, CompetitionOpenSinceMonth, CompetitionOpenSinceYear,
+Promo2SinceWeek, Promo2SinceYear, PromoInterval.
+These were either replaced by engineered versions or no longer needed.
+ 
+### Final output
+Shape: 844,338 rows × 20 columns. Missing values: 0. File size: 49.8MB.
+All dtypes are numeric — ready for modelling.
+Saved to: data/processed/train_features.csv.
+ 
+### Next step
+Modelling (05_modelling.ipynb).
+Start with a mean baseline, then linear regression, then LightGBM.
+Evaluation metric: RMSPE.
