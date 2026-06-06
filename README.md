@@ -103,17 +103,35 @@ Saved to `data/processed/train_features.csv`
 
 ---
 
+## Model Results
+ 
+| Model | RMSPE | vs Baseline |
+|-------|-------|-------------|
+| Mean Baseline | 0.5445 | — |
+| Linear Regression | 0.4613 | -15.3% |
+| **LightGBM** | **0.1852** | **-66.0%** |
+ 
+**Evaluation metric:** RMSPE — Root Mean Square Percentage Error
+ 
+### Top 5 features by importance (gain)
+1. Store — individual store identity is the strongest predictor
+2. CompetitionDistance — proximity to competitor is highly informative
+3. Promo — daily promotions drive significant sales lift
+4. CompetitionOpen — months since competitor opened adds further signal
+5. DayOfWeek — day-of-week patterns are significant
+---
+ 
 ## Workflow
-
+ 
 | Phase | Notebook | Status |
 |-------|----------|--------|
 | Data understanding | 01_data_understanding.ipynb | ✅ Complete |
 | Exploratory analysis | 02_eda.ipynb | ✅ Complete |
 | Data cleaning | 03_data_cleaning.ipynb | ✅ Complete |
-| Feature engineering | 04_feature_engineering.ipynb | 🔄 In progress |
-| Modelling | 05_modelling.ipynb | ⏳ Pending |
-| Evaluation | 06_evaluation.ipynb | ⏳ Pending |
-
+| Feature engineering | 04_feature_engineering.ipynb | ✅ Complete |
+| Modelling | 05_modelling.ipynb | ✅ Complete |
+| Evaluation | 06_evaluation.ipynb | 🔄 In progress |
+ 
 ---
 
 ## Evaluation Metric
@@ -131,7 +149,7 @@ which treats a 10% miss on a small store equally to a 10% miss on a large store.
 - pandas, numpy
 - matplotlib, seaborn
 - scikit-learn
-- LightGBM (planned)
+- LightGBM 
 
 ---
 

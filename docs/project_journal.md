@@ -135,3 +135,50 @@ Saved to: data/processed/train_features.csv.
 Modelling (05_modelling.ipynb).
 Start with a mean baseline, then linear regression, then LightGBM.
 Evaluation metric: RMSPE.
+
+---
+
+## 2026-06-06
+
+Completed modelling notebook. Model saved to models/lgb_model.txt.
+
+### Train/validation split
+Sorted by Year then Week — not Week alone.
+Reason: Week repeats across years. Sorting by Week only would mix 2013 and 2015 data,
+causing future data to leak into training. Year + Week sort ensures true chronological order.
+Split: 85% train (717,687 rows) / 15% validation (126,651 rows).
+
+### Baseline model
+Mean predictor — predict the same average sales for every row.
+RMSPE: 0.5445. This is the floor every model must beat.
+
+### Linear Regression
+RMSPE: 0.4613 — 15.3% better than baseline.
+Shows that linear relationships in the features have some predictive power,
+but the problem is clearly non-linear.
+
+### LightGBM
+RMSPE: 0.1852 — 66% better than baseline.
+Parameters used and reasoning:
+- learning_rate 0.05 (lower than default 0.1 — careful learning, more trees needed)
+- num_leaves 63 (higher than default 31 — justified by large dataset with 18 features)
+- min_child_samples 20 (default — prevents fitting to tiny noisy groups)
+- feature_fraction 0.8 (each tree sees 80% of features — reduces overfitting)
+- bagging_fraction 0.8 + bagging_freq 1 (each tree sees 80% of rows — reduces overfitting)
+Model ran to iteration 998 of 1000 — had not fully converged.
+Increasing num_boost_round to 2000 may improve score further.
+
+### Feature importance (top 5 by gain)
+1. Store — individual store identity is the strongest predictor
+2. CompetitionDistance — proximity to competitor is highly informative
+3. Promo — daily promotions drive significant sales lift
+4. CompetitionOpen — months since competitor opened adds further signal
+5. DayOfWeek — day-of-week patterns are significant
+
+### Observations
+Promo2Active ranked near the bottom despite being logically important.
+The Promo2 effect may be weaker than the daily Promo, or the feature logic needs refinement.
+Store as the top feature suggests that per-store mean encoding could further improve the model.
+
+### Next step
+Evaluation notebook — SHAP values, error analysis, business interpretation.
