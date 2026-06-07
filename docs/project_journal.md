@@ -182,3 +182,52 @@ Store as the top feature suggests that per-store mean encoding could further imp
 
 ### Next step
 Evaluation notebook — SHAP values, error analysis, business interpretation.
+
+---
+ 
+## 2026-06-07
+ 
+Completed evaluation notebook. Project complete.
+ 
+### Model performance summary
+RMSPE: 0.1852
+Mean absolute error: £872 (on avg daily sales of ~£6,900 — ~12.6% in pound terms)
+Median percentage error: 9.7% — half of all predictions land within 10% of actual
+Mean residual: 116 — near zero, confirms no systematic bias in either direction
+ 
+### Residual analysis
+Residuals are centred at 116 with std of 1,224.
+Near-zero mean confirms the model has no systematic over or under-prediction.
+The std of 1,224 reflects store-level variance — some stores are inherently harder to predict.
+ 
+### Monthly error pattern
+Only March–July 2015 in validation set.
+April has the highest error at 11.9% — caused by Easter being a floating holiday.
+Easter timing shifts year to year (sometimes March, sometimes April).
+A fixed Month feature cannot capture this. A DaysToEaster feature would fix it.
+March is the easiest month at 8.0% error.
+ 
+### Per-store error analysis
+Best store: Store 1020 at 4.7% median error — highly consistent, predictable sales.
+Worst store: Store 198 at 50% median error — model essentially guessing.
+9 other stores show 30–50% error (488, 770, 970, 286, 839, 642, 585, 897, 675).
+High-error stores likely share characteristics not captured in the current features.
+Possible causes: renovation periods, unusual local events, high day-to-day volatility.
+ 
+### SHAP findings
+Store: widest spread of all features — individual store identity dominates predictions.
+Promo: clearest directional signal — Promo=1 consistently pushes predictions up.
+CompetitionDistance: close competitors (low distance) pull predictions down.
+Engineered features CompetitionOpen and Promo2Active both contributed meaningfully.
+ 
+### Identified improvements for next iteration
+1. Increase num_boost_round to 2000 — model had not converged at 998 trees
+2. Add per-store mean sales as a feature — directly encodes store baseline
+3. Engineer DaysToEaster feature — fixes floating holiday problem in April
+4. Investigate high-error stores (especially Store 198) for data anomalies
+5. Tune hyperparameters — current params are informed starters, not optimised
+### What this project demonstrated
+End-to-end ML pipeline from raw data to evaluated model.
+Business-grounded decisions at every stage — not just code execution.
+Honest error analysis identifying exactly where the model fails and why.
+ 

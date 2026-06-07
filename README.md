@@ -130,8 +130,17 @@ Saved to `data/processed/train_features.csv`
 | Data cleaning | 03_data_cleaning.ipynb | ✅ Complete |
 | Feature engineering | 04_feature_engineering.ipynb | ✅ Complete |
 | Modelling | 05_modelling.ipynb | ✅ Complete |
-| Evaluation | 06_evaluation.ipynb | 🔄 In progress |
+| Evaluation | 06_evaluation.ipynb | ✅ Complete |
  
+---
+ 
+## Identified Improvements
+ 
+1. Increase `num_boost_round` to 2000 — model had not converged at 998 trees
+2. Add per-store mean sales as a feature — directly encodes store baseline
+3. Engineer `DaysToEaster` feature — fixes floating holiday problem in April
+4. Investigate high-error stores (especially Store 198) for data anomalies
+5. Tune hyperparameters — current params are informed starters, not optimised
 ---
 
 ## Evaluation Metric
@@ -149,7 +158,8 @@ which treats a 10% miss on a small store equally to a 10% miss on a large store.
 - pandas, numpy
 - matplotlib, seaborn
 - scikit-learn
-- LightGBM 
+- LightGBM
+- SHAP 
 
 ---
 
