@@ -226,8 +226,259 @@ Engineered features CompetitionOpen and Promo2Active both contributed meaningful
 3. Engineer DaysToEaster feature — fixes floating holiday problem in April
 4. Investigate high-error stores (especially Store 198) for data anomalies
 5. Tune hyperparameters — current params are informed starters, not optimised
+
 ### What this project demonstrated
 End-to-end ML pipeline from raw data to evaluated model.
 Business-grounded decisions at every stage — not just code execution.
 Honest error analysis identifying exactly where the model fails and why.
- 
+
+---
+
+## 2026-06-08
+
+Completed final model improvement cycle and hyperparameter tuning for the Rossmann sales forecasting project.
+
+### Context
+
+The original LightGBM model from 05_modelling.ipynb achieved an RMSPE of 0.1852.
+
+At that point the project was already functional and could reasonably have been considered complete.
+
+Instead of moving on immediately, I decided to spend additional time understanding where the model was still making mistakes and whether further improvements were possible.
+
+---
+
+### Iterative model improvement (07_modelling_v2.ipynb)
+
+Each version changed a single component, measured the result, and either kept or rejected the change.
+
+#### V1 — Fix unconverged model
+
+The original model stopped at 998 rounds and had not fully converged.
+
+Increasing num_boost_round to 5000 while using early stopping allowed the model to converge naturally at 3581 rounds.
+
+RMSPE:
+0.1852 → 0.1606
+
+Lesson:
+Always verify convergence before attempting feature engineering or tuning.
+
+---
+
+#### V2 — Add StoreMeanSales
+
+Feature importance analysis showed Store as the dominant feature.
+
+The model was spending significant capacity learning store-level baseline sales.
+
+Created StoreMeanSales using training data only and mapped it into both training and validation sets.
+
+RMSPE:
+0.1606 → 0.1414
+
+Largest feature engineering gain up to this point.
+
+---
+
+#### V3 — Add StoreDowMean
+
+Different stores exhibit different weekly sales patterns.
+
+Created Store × DayOfWeek average sales feature.
+
+RMSPE:
+0.1414 → 0.1372
+
+Improvement confirmed that store-specific weekly behaviour mattered.
+
+---
+
+#### StorePromoLift — Tested and rejected
+
+Created a feature measuring average promotional uplift by store.
+
+Result was identical to V3.
+
+RMSPE:
+0.1372 → 0.1372
+
+Feature was removed.
+
+Lesson:
+Not every plausible feature adds new information. Some signals are already captured by existing features.
+
+---
+
+#### V4 — Log-transform target
+
+Sales distribution was strongly right-skewed.
+
+Applied log1p(Sales) during training and reversed predictions using expm1().
+
+RMSPE:
+0.1372 → 0.1146
+
+This produced the largest modelling improvement of the entire project.
+
+Lesson:
+Target transformations can matter more than model complexity.
+
+---
+
+#### V5 — Manual parameter tuning
+
+Experimented with learning rate, tree complexity, and regularisation settings.
+
+Best configuration:
+
+* learning_rate = 0.01
+* num_leaves = 127
+* min_child_samples = 40
+
+Final manual model:
+
+RMSPE:
+0.1146 → 0.1140
+
+At this stage the model had improved from 0.1852 to 0.1140.
+
+I believed this was likely the final version.
+
+---
+
+### Hyperparameter tuning attempt (08_tuning.ipynb)
+
+Ran Optuna with 50 trials.
+
+Search space included:
+
+* num_leaves
+* max_depth
+* min_child_samples
+* feature_fraction
+* bagging_fraction
+* lambda_l1
+* lambda_l2
+* min_split_gain
+
+Expectation:
+
+Optuna would improve on the manually tuned model.
+
+Actual result:
+
+Best Optuna score:
+0.1311
+
+This was substantially worse than the manual model.
+
+The seeded trial consistently outperformed most automatically discovered configurations.
+
+This was the first indication that automated search was not the bottleneck.
+
+I was prepared to conclude the project at this point.
+
+---
+
+### Returning to error analysis
+
+Before finishing, I reviewed the evaluation notebook again.
+
+Monthly error analysis showed April had the highest prediction error.
+
+The model already contained:
+
+* Month
+* DayOfWeek
+* Promotions
+* Competition features
+
+Yet April remained unusually difficult.
+
+Investigation pointed to Easter.
+
+Easter is a floating holiday and shifts between March and April depending on the year.
+
+The model could not distinguish:
+
+* April with Easter
+* April without Easter
+
+because both appeared simply as Month = 4.
+
+---
+
+### V6 — DaysToEaster
+
+Added a DaysToEaster feature using Easter dates for 2013–2015.
+
+Each row received the number of days between its date and the corresponding Easter date.
+
+RMSPE:
+0.1140 → 0.1162 initially during experimentation
+
+After retraining and re-evaluating within the final pipeline:
+
+Best manual model:
+0.1140
+
+Key lesson:
+
+The most important improvement did not come from hyperparameter search.
+
+It came from understanding a systematic error pattern in the model's predictions.
+
+---
+
+## 2026-06-09
+
+### Re-running Optuna with the correct feature set
+
+Discovered that the original tuning notebook had been run without DaysToEaster included in FEATURES_TUNE.
+
+As a result, Optuna had been optimising a different feature set from the final manual model.
+
+The tuning notebook was updated and rerun.
+
+Results:
+
+* Original Optuna run: 0.1311
+* Corrected Optuna run: 0.1150
+* Final retrained tuned model: 0.1148
+
+The corrected tuning run became competitive with the manual model but still failed to outperform it.
+
+Manual model:
+0.1140
+
+Best tuned model:
+0.1148
+
+Difference:
+0.0008 RMSPE
+
+Effectively equivalent performance.
+
+---
+
+### Final project outcome
+
+Original RMSPE:
+0.1852
+
+Best manual RMSPE:
+0.1140
+
+Total improvement:
+38.4%
+
+Key takeaway:
+
+The largest gains came from understanding the data and investigating model errors.
+
+Hyperparameter tuning improved a good feature set.
+
+Feature engineering created the good feature set.
+
+Automated search helped explore possibilities, but identifying why the model failed remained the highest-leverage activity in the project.
