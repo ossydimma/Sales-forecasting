@@ -8,6 +8,7 @@ data/processed/
 
 # Saved model files (too large for GitHub)
 models/
+!models/lgbm_v7_final.joblib
 
 # Python cache
 __pycache__/

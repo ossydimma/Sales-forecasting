@@ -482,3 +482,31 @@ Hyperparameter tuning improved a good feature set.
 Feature engineering created the good feature set.
 
 Automated search helped explore possibilities, but identifying why the model failed remained the highest-leverage activity in the project.
+
+
+## 2026-06-10
+
+Completed final repo cleanup after mentor feedback.
+
+Mentor pointed out that a recruiter cannot use a model without a saved file.
+The notebook trains the model in memory — closing the kernel loses everything.
+A .joblib file is what a developer actually needs to load and use the model
+without touching any notebook code.
+
+Added joblib save to 07_modelling_v2.ipynb after the final V7 training cell.
+Saved as models/lgbm_v7_final.joblib — the best model (RMSPE 0.1140).
+Did not save the Optuna tuned model — it scored 0.1148, worse than V7.
+No reason to expose an inferior model as a deliverable.
+
+Created src/predict.py — a 20-line script that loads the model and runs
+predictions on new input data. This is what a developer integrating the
+model would actually use.
+
+Updated .gitignore to ignore all model files except lgbm_v7_final.joblib.
+Updated README with Loading the Model section and predict.py in workflow table.
+
+Lesson: saving the model file is not optional. It is the deliverable.
+The notebook is the training process. The .joblib file is the result.
+These are two different things and both belong in the repo.
+
+Project is now complete and pushed to GitHub.

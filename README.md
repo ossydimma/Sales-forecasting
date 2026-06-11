@@ -43,7 +43,8 @@ rossmann-sales-forecasting/
 │   └── project_journal.md          # Day-by-day decisions and learnings
 │
 ├── images/                         # Charts saved from notebooks
-├── models/                         # Saved model files (not tracked by git)
+├── models/
+│   └── lgbm_v7_final.joblib        # Best model — LightGBM V7 (RMSPE 0.1140)
 │
 ├── notebooks/
 │   ├── 01_data_understanding.ipynb
@@ -54,6 +55,9 @@ rossmann-sales-forecasting/
 │   ├── 06_evaluation.ipynb
 │   ├── 07_modelling_v2.ipynb       # Iterative improvement: 0.1852 → 0.1140
 │   └── 08_tuning.ipynb             # Optuna hyperparameter search → 0.1148
+│
+├── src/
+│   └── predict.py                  # Load model and run predictions
 │
 ├── .gitignore
 └── README.md
@@ -138,8 +142,8 @@ rossmann-sales-forecasting/
 
 ## Workflow
 
-| Phase | Notebook | Status |
-|-------|----------|--------|
+| Phase | Notebook / File | Status |
+|-------|----------------|--------|
 | Data understanding | 01_data_understanding.ipynb | ✅ Complete |
 | Exploratory analysis | 02_eda.ipynb | ✅ Complete |
 | Data cleaning | 03_data_cleaning.ipynb | ✅ Complete |
@@ -148,13 +152,30 @@ rossmann-sales-forecasting/
 | Evaluation | 06_evaluation.ipynb | ✅ Complete |
 | Iterative improvement | 07_modelling_v2.ipynb | ✅ Complete |
 | Hyperparameter tuning | 08_tuning.ipynb | ✅ Complete |
+| Saved model | models/lgbm_v7_final.joblib | ✅ Complete |
+| Prediction script | src/predict.py | ✅ Complete |
+
+---
+
+## Loading the Model
+
+```python
+import joblib
+import pandas as pd
+
+model = joblib.load("models/lgbm_v7_final.joblib")
+predictions = model.predict(your_dataframe)
+```
+
+Input must include the same features used during training.
+See `src/predict.py` for a complete usage example.
 
 ---
 
 ## Tools and Libraries
 
 - Python 3.13 · pandas · numpy · matplotlib · seaborn
-- scikit-learn · LightGBM · SHAP · Optuna
+- scikit-learn · LightGBM · SHAP · Optuna . joblib
 
 ---
 
